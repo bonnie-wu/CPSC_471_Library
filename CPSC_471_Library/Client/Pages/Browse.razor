@@ -1,0 +1,34 @@
+﻿@page "/browse"
+@inject IBookService BookService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Browse</PageTitle>
+
+<h3>Browse</h3>
+
+<input type="text" id="input" onkeyup="sortProducts()" placeholder="Search for products...">
+<ul id="myUL">
+    @foreach (var book in BookService.Books)
+    {
+        <li><button class="displayBook" @onclick="(() => displayBook(book.Id))">@book.Title</button></li>
+    }
+    <li><a href="#">Book 1</a></li>
+    <li><a href="#">Book 2</a></li>
+    <li><a href="#">Movie 1</a></li>
+    <li><a href="#">Movie 2</a></li>
+    <li><a href="#">CD 1</a></li>
+    <li><a href="#">CD 2</a></li>
+    <li><a href="#">DVD 1</a></li>
+    <li><a href="#">DVD 2</a></li>
+    <li><a href="#">Digital Book 1</a></li>
+    <li><a href="#">Digital Book 2</a></li>
+</ul>
+
+@code {
+    protected override async Task OnInitializedAsync() => await BookService.GetBooks();
+
+    void displayBook(int Id)
+    {
+        NavigationManager.NavigateTo($"showBook/{Id}");
+    }
+}

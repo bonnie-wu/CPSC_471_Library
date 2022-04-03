@@ -1,0 +1,36 @@
+﻿@page "/showBook"
+@page "/showBook/{id:int}"
+@inject IBookService BookService
+
+@if (Id == null)
+{
+    
+}
+else
+{
+    <h3>@book.Title</h3>
+    <p> @book.Author</p>
+    <p> @book.Copies</p>
+    //etc...
+}
+
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+            // do something
+        }
+        else
+        {
+            book = await BookService.GetSingleBook((int)Id);
+        }
+    }
+}
