@@ -1,7 +1,10 @@
-﻿@page "/events" 
+﻿@page "/Events"
+@page "/Events/{EventId:int}"
+@inject IEventService EventService
+
 <PageTitle> "Events"</PageTitle>
+
 <h3>Events</h3>
 
 @code {
-
 }

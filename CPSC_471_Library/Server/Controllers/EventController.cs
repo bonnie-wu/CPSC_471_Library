@@ -13,10 +13,16 @@ namespace CPSC_471_Library.Server.Controllers
             new Event {EventName = "Coding for Teens", EventId = 2}
         };        
     
-        [HttpGet("{EventId}")]
-        public async Task<ActionResult<Events>> GetEvents()
+        [HttpGet]
+        public async Task<ActionResult<List<Event>>> GetEvents()
         {
             return Ok(Events);
+        }
+
+        [HttpGet("{EventId}")]
+        public async Task<ActionResult<Event>> GetSingleEvent(int EventId)
+        {
+            return Ok(Events[EventId]);
         }
     }
 
