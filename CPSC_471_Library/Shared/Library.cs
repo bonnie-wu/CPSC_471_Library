@@ -8,11 +8,9 @@ namespace CPSC_471_Library.Shared
 {
 	public class Library
 	{
-		public string LibraryBranch { get; set; } = string.Empty;
-
+		public string LibraryBranch { get; set; } = String.Empty;
 		public int LibraryId { get; set; }
-
-		public string LibraryAddress { get; set; } = string.Empty;
+		public string LibraryAddress { get; set; } = String.Empty;
 	}
 }
 

@@ -8,7 +8,7 @@ namespace CPSC_471_Library.Shared
 {
 	public class Event
 	{
-		public string EventName { get; set; } = string.Empty;
+		public string EventName { get; set; } = String.Empty;
 
 		public int EventId {get; set; }
 	}
