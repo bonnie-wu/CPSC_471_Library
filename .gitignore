@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CPSC_471_Library/Server/Migrations/20220414021408_staffnew.cs
+/CPSC_471_Library/Server/Migrations/20220414021408_staffnew.Designer.cs
+/CPSC_471_Library/Server/Migrations/DataContextModelSnapshot.cs

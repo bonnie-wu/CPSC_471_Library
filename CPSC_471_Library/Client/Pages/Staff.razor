@@ -219,6 +219,9 @@ else
 	   {
 		   <p> Name: @staff.Name</p>
 		   <p> Staff Number: @staff.Staff_num</p>
+		   <p> Phone Number: @staff.phone_num</p>
+		   <p> Position: @staff.position</p>
+		   <p> Works At: @staff.Branch_id</p>
 		   <br />
 	   }
       </div>
@@ -268,6 +271,12 @@ else
       <div class="modal-body">
 		<label for="loginEmail" class="form-label">Name</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Staff members name..." autocomplete="off" @bind-value="name" required/>
+		<label for="loginEmail" class="form-label">Phone Number</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="xxx-xxx-xxxx" autocomplete="off" @bind-value="phone_num" required/>
+		<label for="loginEmail" class="form-label">Position</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Staff position..." autocomplete="off" @bind-value="pos" required/>
+		<label for="loginEmail" class="form-label">Branch</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Branch id..." autocomplete="off" @bind-value="branch" required/>
 	</div>
       <div class="modal-footer">
 		 <button type="button" class="btn btn-success" @onclick="AddStaff">Add</button>
@@ -448,7 +457,8 @@ else
 		showReturnConfirm, showRemoveStaff, displayRemoveStaff, showRemoveConfirm, displayRemoveConfirm,
 		showRemoveCard, displayRemoveCard;
 	private string? card_holder="", title="", loc="", author="", copies="", pub="", dis="", genre="",
-		num="", name="", date="", due="", error1="", error2="",error3="", error4="", error5="", snum="", cnum="";
+		num="", name="", date="", due="", error1="", error2="",error3="", error4="", error5="", snum="", cnum="",
+		phone_num="", pos="", branch="";
 
 	CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
 
@@ -533,6 +543,9 @@ else
 	private async Task AddStaff()
 	{
 		staff.Name = name;
+		staff.phone_num = phone_num;
+		staff.position = pos;
+		staff.Branch_id = branch;
 		await StaffService.AddStaff(staff);
 		await CloseAddStaff();
 	}
