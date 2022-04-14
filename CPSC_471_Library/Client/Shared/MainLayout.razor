@@ -1,5 +1,12 @@
-﻿@inherits LayoutComponentBase
+﻿@* 
+	The login popup was referenced from: https://www.prowaretech.com/articles/current/blazor/wasm/login-form
+*@
 
+@inherits LayoutComponentBase
+
+@inject IStaffService StaffService 
+
+<CascadingValue Value="this">
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -7,7 +14,17 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <div style="text-align:right;">
+				@if (loggedIn)
+				{
+					<a class="btn btn-sm btn-primary text-white" title="Staff" href="staffUI"><span class="oi oi-key"></span></a>
+					<button class="btn btn-sm btn-danger" title="Logout" @onclick="Logout"><span class="oi oi-account-logout"></span></button>
+				}
+				else
+				{
+					<button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
+				}
+			</div>
         </div>
 
         <article class="content px-4">
@@ -15,3 +32,86 @@
         </article>
     </main>
 </div>
+</CascadingValue>
+
+<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
+
+<div class="modal fade @(show ? "show" : "")  @(display ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Login Form</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label for="loginEmail" class="form-label">Staff ID @error</label>
+					<input type="text" class="form-control" id="loginEmail" placeholder="Please insert staff id..." autocomplete="off" required @bind-value="user" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" @onclick="Login">Login</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private bool show, display, loggedIn;
+	private string? user;
+	private string error { get; set; }
+	CPSC_471_Library.Shared.Staff staff = new CPSC_471_Library.Shared.Staff();
+
+	public string? GetUserName()
+	{
+		return loggedIn ? user : null;
+	}
+
+	public CPSC_471_Library.Shared.Staff GetStaff()
+	{
+		return staff;
+	}
+
+	public async Task OpenLogin()
+	{
+		display = true;
+		await Task.Delay(100);
+		show = true;
+	}
+
+	public async Task Logout()
+	{
+		user = null;
+		loggedIn = false;
+		error = "";
+	}
+
+	private async Task Close()
+	{
+		show = false;
+		await Task.Delay(500);
+		display = false;
+		error = "";
+	}
+
+	private async Task Login()
+	{
+		if (!string.IsNullOrEmpty(user))
+		{
+			try
+			{
+				staff = await StaffService.GetStaffMember((string)user);
+				loggedIn = true;
+				await Close();
+			} catch (Exception e)
+			{
+				loggedIn = false;
+				error = "(invalid staff id)";
+			}
+		}
+	}
+}

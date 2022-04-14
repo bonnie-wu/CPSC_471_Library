@@ -33,6 +33,15 @@ namespace CPSC_471_Library.Server.Controllers
             return Ok(book);
         }
 
+        [HttpGet("books/{title}")]
+        public async Task<ActionResult<Book>> GetBookByTitle(string title)
+        {
+            var book = await context.Books.SingleOrDefaultAsync(book_ => book_.Title == title);
+            if (book == null)
+                return BadRequest("Book not found.");
+            return Ok(book);
+        }
+
         [HttpPost]
         public async Task<ActionResult<List<Book>>> AddBook(Book book)
         {

@@ -1,0 +1,867 @@
+﻿@* 
+	This page was referenced from: https://www.prowaretech.com/articles/current/blazor/wasm/login-form
+*@
+
+@page "/staffUI"
+@inject IStaffService StaffService 
+
+<h2>Staff UI</h2>
+
+@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
+{
+	<h3 class="my-4">Hello, @mainLayout.GetStaff().Name</h3>
+	<button class="button-67" role="button" @onclick="CreateLibCard"> Create Library Card</button >
+	<button class="button-67" role="button" @onclick="ShowNewBook"> Add New Book</button >
+	<button class="button-67" role="button" @onclick="ShowNewLoan"> Loan Book</button >
+	<button class="button-67" role="button" > Loan CD or DVD</button >
+	<button class="button-67" role="button" > Add a New Location</button >
+	<button class="button-67" role="button" @onclick="GetCardHolders"> Get All Card Holders</button >
+	<button class="button-67" role="button" @onclick="GetStaffMembers"> Show Staff</button >
+	<button class="button-67" role="button" @onclick="ShowLoans"> Show Loans</button >
+	<button class="button-67" role="button" @onclick="ShowAddStaff"> Add Staff Member</button >
+	<button class="button-67" role="button" @onclick="GetHolds"> Show Items on Hold</button >
+	<button class="button-67" role="button" @onclick="ShowReturn"> Return Item</button >
+	<button class="button-67" role="button" @onclick="ShowRemoveStaff"> Remove Staff</button >
+	<button class="button-67" role="button" @onclick="ShowRemoveCard"> Remove Library Card</button >
+}
+else
+{
+	<h3 class="my-4">Please Login</h3>
+
+	<button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Login</button>
+}
+
+@* Modals *@
+<div class="modal fade @(showLib ? "show" : "")  @(displayLib ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Create new library card</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseLib">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label for="loginEmail" class="form-label">Name</label>
+					<input type="text" class="form-control" id="loginEmail" placeholder="Please enter name..." autocomplete="off" required @bind-value="card_holder" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" @onclick="AddLibCard">Create</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseLib">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showNum ? "show" : "")  @(displayNum ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Success new card number is: @card.Card_number</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseNum">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseNum">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showHolders ? "show" : "")  @(displayHolders ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Library Card Holders</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseCardHolders">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @foreach (var card in StaffService.Cards)
+	   {
+		   <p> Name: @card.Name</p>
+		   <p> Card Number: @card.Card_number</p>
+		   <br />
+	   }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseCardHolders">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showNewBook ? "show" : "")  @(displayNewBook ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Add new book</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseNewBook">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Title</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Book title..." autocomplete="off" @bind-value="title" required/>
+		<label for="loginEmail" class="form-label">Location(s)</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate locations with commas ," autocomplete="off" required @bind-value="loc" />
+		<label for="loginEmail" class="form-label">Author</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Name of author..." autocomplete="off" required @bind-value="author" />
+		<label for="loginEmail" class="form-label">Available Copies</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Number of available copies..." autocomplete="off" required @bind-value="copies" />  
+		<label for="loginEmail" class="form-label">Publisher</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Name of publisher..." autocomplete="off" required @bind-value="pub" />
+		<label for="loginEmail" class="form-label">Distribution</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="physical or digital..." autocomplete="off" required @bind-value="dis" />
+		<label for="loginEmail" class="form-label">Genre(s)</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate genres with commas ," autocomplete="off" required @bind-value="genre" />
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="AddNewBook">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseNewBook">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showBookEr ? "show" : "")  @(displayBookEr ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Error: @book.Title already exists</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseBookError">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseBookError">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showAddedBook ? "show" : "")  @(displayAddedBook ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">@book.Title has been added</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseAddedBook">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseAddedBook">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showNewLoan ? "show" : "")  @(displayNewLoan ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Loan Book</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseNewLoan">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Title @error1</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Book title..." autocomplete="off" @bind-value="title" required/>
+		<label for="loginEmail" class="form-label">Name</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Borrowers Name..." autocomplete="off" required @bind-value="name" />
+		<label for="loginEmail" class="form-label">Card Number @error2</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Borrower's Library Card Number..." autocomplete="off" required @bind-value="num" />
+		<label for="loginEmail" class="form-label">Date</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Date of loan (mm/dd/yyyy)" autocomplete="off" required @bind-value="date" />  
+		<label for="loginEmail" class="form-label">Due Date</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Books return date (mm/dd/yyyy)" autocomplete="off" required @bind-value="due" />
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="LoanBook">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseNewLoan">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showLoanConfirm ? "show" : "")  @(displayLoanConfirm ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Success, @loan.Title is due on: @loan.Due_date</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseLoanConfirm">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseLoanConfirm">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showStaff ? "show" : "")  @(displayStaff ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Staff Members</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseStaff">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @foreach (var staff in StaffService.Staffs)
+	   {
+		   <p> Name: @staff.Name</p>
+		   <p> Staff Number: @staff.Staff_num</p>
+		   <br />
+	   }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseStaff">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showLoans ? "show" : "")  @(displayLoans ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Loans</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseLoans">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @foreach (var loan in StaffService.Loans)
+	   {
+		   <p> Name: @loan.Name</p>
+		   <p> Card Number: @loan.Card_number</p>
+		   <p> Book Title: @loan.Title </p>
+		   <p> Date Borrowed: @loan.Curr_date </p>
+		   <p> Due Date: @loan.Due_date </p>
+		   <br />
+	   }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseLoans">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showAddStaff ? "show" : "")  @(displayAddStaff ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Add a staff member</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseAddStaff">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Name</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Staff members name..." autocomplete="off" @bind-value="name" required/>
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="AddStaff">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseAddStaff">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showHold ? "show" : "")  @(displayHold ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">No more available copies of, @hold.Title </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseHold">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Would you like to put this item on hold?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" @onclick="Hold">Yes</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseHold">No</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showHoldConfirm ? "show" : "")  @(displayHoldConfirm ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Success, @hold.Title has been put on hold by: @hold.Name</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseHoldConfirm">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseHoldConfirm">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showHolds ? "show" : "")  @(displayHolds ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Current Hold Requests</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseHolds">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @foreach (var hold in StaffService.Holds)
+	   {
+		   <p> Name: @hold.Name</p>
+		   <p> Card Number: @hold.Card_number</p>
+		   <p> Date put on hold: @hold.Hold_date</p>
+		   <p> Book Title: @hold.Title </p>
+		   <br />
+	   }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseHolds">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showReturn ? "show" : "")  @(displayReturn ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Return Item @error5</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseReturn">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Card number</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Enter borrowers card number..." autocomplete="off" @bind-value="num" required/>
+		<label for="loginEmail" class="form-label">Title</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Enter borrowed item's title..." autocomplete="off" @bind-value="title" required/>
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="ReturnItem">Remove</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseReturn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showReturnConfirm ? "show" : "")  @(displayReturnConfirm ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Success, @title has been returned </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseReturnConfirm">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseReturnConfirm">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showRemoveStaff ? "show" : "")  @(displayRemoveStaff ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Remove Staff</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseRemoveStaff">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Staff number @error4</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Enter Staff number..." autocomplete="off" @bind-value="snum" required/>
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="RemoveStaff">Remove</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseRemoveStaff">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade @(showRemoveConfirm ? "show" : "")  @(displayRemoveConfirm ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Success, @snum has been removed </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseRemoveConfirm">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseRemoveConfirm">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showRemoveCard ? "show" : "")  @(displayRemoveCard ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Remove Card</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseRemoveCard">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Card number @error3</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Enter Library card number..." autocomplete="off" @bind-value="cnum" required/>
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="RemoveCard">Remove</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseRemoveCard">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+	[CascadingParameter]
+	public MainLayout mainLayout { get; set; }
+
+	private bool showLib, displayLib, showNum, displayNum, showHolders, displayHolders, 
+		showNewBook, displayNewBook, showBookEr, displayBookEr, displayAddedBook, showAddedBook,
+		showNewLoan, displayNewLoan, showLoanConfirm, displayLoanConfirm, showStaff, displayStaff,
+		showLoans, displayLoans, showAddStaff, displayAddStaff, showHold, displayHold, showHoldConfirm,
+		displayHoldConfirm, showHolds, displayHolds, showReturn, displayReturn, displayReturnConfirm,
+		showReturnConfirm, showRemoveStaff, displayRemoveStaff, showRemoveConfirm, displayRemoveConfirm,
+		showRemoveCard, displayRemoveCard;
+	private string? card_holder="", title="", loc="", author="", copies="", pub="", dis="", genre="",
+		num="", name="", date="", due="", error1="", error2="",error3="", error4="", error5="", snum="", cnum="";
+
+	CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
+
+	LibraryCard card = new LibraryCard();
+	Loan loan = new Loan();
+	Hold hold = new Hold();
+	CPSC_471_Library.Shared.Staff staff = new CPSC_471_Library.Shared.Staff();
+
+	private async Task GetCardHolders()
+	{
+		await StaffService.GetLibraryCards();
+		await ShowCardHolders();
+	}
+
+	private async Task GetStaffMembers() 
+	{
+		await StaffService.GetStaff();
+		await ShowStaff();
+	}
+
+	private async Task GetHolds()
+	{
+		await StaffService.GetHolds();
+		await ShowHolds();
+	}
+
+	private async Task AddLibCard()
+	{
+		if (!string.IsNullOrEmpty(card_holder))
+		{
+			card.Name = (string)card_holder;
+			card = await StaffService.AddLibraryCard(card);
+			await CloseLib();
+			await OpenCardSuccess();
+		}
+
+	}
+
+	private async Task AddNewBook()
+	{
+		book.Title = title;
+		book.Location = loc;
+		book.Author = author;
+		book.Copies = Int32.Parse(copies);
+		book.Distribution = dis;
+		book.Publisher = pub;
+		book.Genre = genre;
+		CPSC_471_Library.Shared.Book book_ = await StaffService.AddBook(book);
+		await CloseNewBook();
+		if (book_ == null)
+		{
+			await ShowAddedBook();
+		}
+		else
+		{
+			await ShowBookError();
+
+		}
+	}
+
+	private async Task LoanBook()
+	{
+		loan.Card_number = num;
+		loan.Curr_date = date;
+		loan.Due_date = due;
+		loan.Name = name;
+		loan.Title = title;
+		string res = await StaffService.AddLoan(loan);
+		if (res == "No book")
+			error1 = "(No such book)";
+		else if (res == "No card")
+			error2 = "(Card does not exist)";
+		else if (res == "hold")
+			await ShowHold();
+		else
+		{
+			await CloseNewLoan();
+			await ShowLoanConfirm();
+		}
+	}
+
+	private async Task AddStaff()
+	{
+		staff.Name = name;
+		await StaffService.AddStaff(staff);
+		await CloseAddStaff();
+	}
+
+	private async Task Hold()
+	{
+		await CloseHold();
+		hold.Name = loan.Name;
+		hold.Title = title;
+		hold.Hold_date = loan.Curr_date;
+		await StaffService.HoldItem(hold);
+		await ShowHoldConfirm();
+	}
+
+	private async Task ReturnItem()
+	{
+		if (num != null && title != null)
+		{
+			string res = await StaffService.RemoveLoan((string)num, (string)title);
+			await CloseReturn();
+			//await ShowReturnConfirm();
+		}
+		
+	}
+
+	private async Task RemoveStaff()
+	{
+		var res = await StaffService.RemoveStaff((string)snum);
+		if (res == "ok")
+		{
+			await CloseRemoveStaff();
+			await ShowRemoveConfirm();
+		} 
+		else
+		{
+			error4 = "(Not a valid Staff number)";
+		}
+		
+	}
+
+	private async Task RemoveCard()
+	{
+		string res = await StaffService.RemoveCard((string)cnum);
+		if (res == "ok")
+		{
+			await CloseRemoveCard();
+			//await ShowRemoveConfirm();
+		} 
+		else
+		{
+			error3 = res;
+		}
+
+	}
+
+	// Modal Functions 
+	public async Task CreateLibCard()
+	{
+		displayLib = true;
+		await Task.Delay(100);
+		showLib = true;
+	}
+
+	private async Task CloseLib()
+	{
+		showLib = false;
+		await Task.Delay(500);
+		displayLib = false;
+	}
+
+	public async Task OpenCardSuccess()
+	{
+		displayNum = true;
+		await Task.Delay(100);
+		showNum = true;
+	}
+
+	private async Task CloseNum()
+	{
+		showNum = false;
+		await Task.Delay(500);
+		displayNum = false;
+	}
+
+	public async Task ShowCardHolders()
+	{
+		displayHolders = true;
+		await Task.Delay(100);
+		showHolders = true;
+	}
+
+	private async Task CloseCardHolders()
+	{
+		showHolders = false;
+		await Task.Delay(500);
+		displayHolders = false;
+	}
+
+	public async Task ShowNewBook()
+	{
+		displayNewBook = true;
+		await Task.Delay(100);
+		showNewBook = true;
+	}
+
+	private async Task CloseNewBook()
+	{
+		showNewBook = false;
+		await Task.Delay(500);
+		displayNewBook = false;
+	}
+
+	public async Task ShowBookError()
+	{
+		displayBookEr = true;
+		await Task.Delay(100);
+		showBookEr = true;
+	}
+
+	private async Task CloseBookError()
+	{
+		showBookEr = false;
+		await Task.Delay(500);
+		displayBookEr = false;
+	}
+
+	public async Task ShowAddedBook()
+	{
+		displayAddedBook = true;
+		await Task.Delay(100);
+		showAddedBook = true;
+	}
+
+	private async Task CloseAddedBook()
+	{
+		showAddedBook = false;
+		await Task.Delay(500);
+		displayAddedBook = false;
+	}
+
+	public async Task ShowNewLoan()
+	{
+		displayNewLoan = true;
+		await Task.Delay(100);
+		showNewLoan = true;
+	}
+
+	private async Task CloseNewLoan()
+	{
+		showNewLoan = false;
+		await Task.Delay(500);
+		displayNewLoan = false;
+		error1 = "";
+		error2="";
+	}
+
+	public async Task ShowLoanConfirm()
+	{
+		displayLoanConfirm = true;
+		await Task.Delay(100);
+		showLoanConfirm = true;
+	}
+
+	private async Task CloseLoanConfirm()
+	{
+		showLoanConfirm = false;
+		await Task.Delay(500);
+		displayLoanConfirm = false;
+	}
+
+	public async Task ShowStaff()
+	{
+		displayStaff = true;
+		await Task.Delay(100);
+		showStaff = true;
+	}
+
+	private async Task CloseStaff()
+	{
+		showStaff = false;
+		await Task.Delay(500);
+		displayStaff = false;
+	}
+
+	public async Task ShowLoans()
+	{
+		await StaffService.GetLoans();
+		displayLoans = true;
+		await Task.Delay(100);
+		showLoans = true;
+	}
+
+	private async Task CloseLoans()
+	{
+		showLoans = false;
+		await Task.Delay(500);
+		displayLoans = false;
+	}
+
+	public async Task ShowAddStaff()
+	{
+		displayAddStaff = true;
+		await Task.Delay(100);
+		showAddStaff = true;
+	}
+
+	private async Task CloseAddStaff()
+	{
+		showAddStaff = false;
+		await Task.Delay(500);
+		displayAddStaff = false;
+	}
+
+	public async Task ShowHold()
+	{
+		await CloseNewLoan();
+		displayHold = true;
+		await Task.Delay(100);
+		showHold = true;
+	}
+
+	private async Task CloseHold()
+	{
+		showHold = false;
+		await Task.Delay(500);
+		displayHold = false;
+	}
+
+	public async Task ShowHoldConfirm()
+	{
+		displayHoldConfirm = true;
+		await Task.Delay(100);
+		showHoldConfirm = true;
+	}
+
+	private async Task CloseHoldConfirm()
+	{
+		showHoldConfirm = false;
+		await Task.Delay(500);
+		displayHoldConfirm = false;
+	}
+
+	public async Task ShowHolds()
+	{
+		displayHolds = true;
+		await Task.Delay(100);
+		showHolds = true;
+	}
+
+	private async Task CloseHolds()
+	{
+		showHolds = false;
+		await Task.Delay(500);
+		displayHolds = false;
+	}
+
+	public async Task ShowReturn()
+	{
+		displayReturn = true;
+		await Task.Delay(100);
+		showReturn = true;
+	}
+
+	private async Task CloseReturn()
+	{
+		showReturn = false;
+		await Task.Delay(500);
+		displayReturn = false;
+	}
+
+	public async Task ShowReturnConfirm()
+	{
+		displayReturnConfirm = true;
+		await Task.Delay(100);
+		showReturnConfirm = true;
+	}
+
+	private async Task CloseReturnConfirm()
+	{
+		showReturnConfirm = false;
+		await Task.Delay(500);
+		displayReturnConfirm = false;
+	}
+
+	public async Task ShowRemoveStaff()
+	{
+		displayRemoveStaff = true;
+		await Task.Delay(100);
+		showRemoveStaff = true;
+	}
+
+	private async Task CloseRemoveStaff()
+	{
+		showRemoveStaff = false;
+		await Task.Delay(500);
+		displayRemoveStaff = false;
+	}
+
+	public async Task ShowRemoveCard()
+	{
+		displayRemoveCard = true;
+		await Task.Delay(100);
+		showRemoveCard = true;
+	}
+
+	private async Task CloseRemoveCard()
+	{
+		showRemoveCard = false;
+		await Task.Delay(500);
+		displayRemoveCard = false;
+	}
+
+	public async Task ShowRemoveConfirm()
+	{
+		displayRemoveConfirm = true;
+		await Task.Delay(100);
+		showRemoveConfirm = true;
+	}
+
+	private async Task CloseRemoveConfirm()
+	{
+		showRemoveConfirm = false;
+		await Task.Delay(500);
+		displayRemoveConfirm = false;
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+}

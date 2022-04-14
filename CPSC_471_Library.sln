@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPSC_471_Library.Server", "CPSC_471_Library\Server\CPSC_471_Library.Server.csproj", "{27C10CDA-FC45-4760-BE18-B3DEE8C80C7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPSC_471_Library.Server", "CPSC_471_Library\Server\CPSC_471_Library.Server.csproj", "{27C10CDA-FC45-4760-BE18-B3DEE8C80C7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPSC_471_Library.Client", "CPSC_471_Library\Client\CPSC_471_Library.Client.csproj", "{38DC1A26-6142-497F-9077-39A79CBB1CBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPSC_471_Library.Client", "CPSC_471_Library\Client\CPSC_471_Library.Client.csproj", "{38DC1A26-6142-497F-9077-39A79CBB1CBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPSC_471_Library.Shared", "CPSC_471_Library\Shared\CPSC_471_Library.Shared.csproj", "{7EF8F55E-FC2C-4EB8-B271-307064798FBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPSC_471_Library.Shared", "CPSC_471_Library\Shared\CPSC_471_Library.Shared.csproj", "{7EF8F55E-FC2C-4EB8-B271-307064798FBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
