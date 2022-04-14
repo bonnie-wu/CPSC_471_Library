@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace CPSC_471_Library.Shared
 {
-	public class Event
-	{
-		public string EventName { get; set; } = String.Empty;
-
-		public int EventId {get; set; }
-	}
+    public class LibraryEvent
+    {
+        public string EventName { get; set; } = string.Empty;
+        public int EventId { get; set; }
+    }
 }

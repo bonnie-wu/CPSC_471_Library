@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using CPSC_471_Library.Shared;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace CPSC_471_Library.Server.Controllers
 {
@@ -8,22 +6,27 @@ namespace CPSC_471_Library.Server.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        public static List<Event> Events = new List<Event> { 
-            new Event {EventName = "Storytime for Toddlers", EventId = 1},
-            new Event {EventName = "Coding for Teens", EventId = 2}
-        };        
-    
-        [HttpGet]
-        public async Task<ActionResult<List<Event>>> GetEvents()
+        public static List<LibraryEvent> libEvents = new List<LibraryEvent>
         {
-            return Ok(Events);
+            new LibraryEvent { EventName = "Reading with toddlers ", EventId = 1 },
+            new LibraryEvent { EventName = "Coding with teens ", EventId = 2 }
+        };
+
+        [HttpGet]
+        public async Task<ActionResult<List<LibraryEvent>>> getAllEvents()
+        {
+            return Ok(libEvents);
         }
 
-        [HttpGet("{EventId}")]
-        public async Task<ActionResult<Event>> GetSingleEvent(int EventId)
+        [HttpGet("{eventid}")]
+        public async Task<ActionResult<LibraryEvent>> getSingleEvent(int eventid)
         {
-            return Ok(Events[EventId]);
+            var libEvent = libEvents.FirstOrDefault(h => h.EventId == eventid);
+            if (libEvent == null)
+            {
+                return NotFound("Sorry, event could not be found. \n");
+            }
+            return Ok(libEvent);
         }
     }
-
 }

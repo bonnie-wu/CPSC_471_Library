@@ -1,0 +1,28 @@
+﻿@page "/Events"
+@inject ILibraryEventService LibraryEventService
+
+<h3>Library Events</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Event Name</th>
+            <th>Event Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var libEvent in LibraryEventService.LibEvents){
+        <tr>
+            <td>@libEvent.EventName</td>
+            <td>@libEvent.EventName</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await LibraryEventService.getAllEvents();
+    }
+}
