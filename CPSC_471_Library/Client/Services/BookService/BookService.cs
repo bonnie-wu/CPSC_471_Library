@@ -41,7 +41,6 @@ namespace CPSC_471_Library.Client.Services.BookService
                 await GetBooks();
                 navigationManager.NavigateTo("browse");
             }   
-            throw new Exception("error");
         }
 
         /*public async Task RemoveCDVD(int id)

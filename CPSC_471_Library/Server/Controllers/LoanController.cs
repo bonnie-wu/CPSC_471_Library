@@ -29,39 +29,23 @@ namespace CPSC_471_Library.Server.Controllers
             return Ok(loan);
         }
 
-        [HttpGet("card/{no}")]
-        public async Task<ActionResult<List<Loan>>> Get(string no)
-        {
-            var loan = context.Loans.Where<Loan>(loan_ => loan_.Card_number == no);
-            if (loan == null)
-                return BadRequest("No loans found.");
-            return Ok(await context.Loans.ToListAsync());
-        }
-
-        [HttpGet("date/{due}")]
-        public async Task<ActionResult<List<Loan>>> GetByDueDate(string due)
-        {
-            var loan = context.Loans.Where<Loan>(loan_ => loan_.Due_date == due);
-            if (loan == null)
-                return BadRequest("No loans found.");
-            return Ok(await context.Loans.ToListAsync());
-        }
-
         [HttpPost]
-        public async Task AddLoan(Loan loan)
+        public async Task<ActionResult<List<Loan>>> AddLoan(Loan loan)
         {
             context.Loans.Add(loan);
             await context.SaveChangesAsync();
+            return Ok(await context.Loans.ToListAsync());
         }
 
         [HttpDelete("{id}")]
-        public async Task RemoveLoan(int id)
+        public async Task<ActionResult<List<Loan>>> RemoveLoan(int id)
         {
             var loan = await context.Loans.FindAsync(id);
             if (loan == null)
-                return;
+                return BadRequest("No such loan");
             context.Loans.Remove(loan);
             await context.SaveChangesAsync();
+            return Ok(await context.Loans.ToListAsync());
         }
     }
 }

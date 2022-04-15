@@ -15,19 +15,19 @@ namespace CPSC_471_Library.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LibraryEvent>>> GetAllLibraries()
+        public async Task<ActionResult<List<Library>>> GetAllLibraries()
         {
             var libraries = await _context.Libraries.ToListAsync();
             return Ok(libraries);
         }
 
         [HttpGet("{Id}")]
-        public async Task<ActionResult<LibraryEvent>> getSingleLibrary(int Id)
+        public async Task<ActionResult<Library>> getSingleLibrary(int Id)
         {
             var library = _context.Libraries.FirstOrDefault(l => l.Id == Id);
             if (library == null)
             {
-                return NotFound("Sorry, event could not be found. \n");
+                return NotFound("Sorry, branch could not be found. \n");
             }
             return Ok(library);
         }

@@ -22,6 +22,7 @@
 	<button class="button-67" role="button" @onclick="ShowReturn"> Return Item</button >
 	<button class="button-67" role="button" @onclick="ShowRemoveStaff"> Remove Staff</button >
 	<button class="button-67" role="button" @onclick="ShowRemoveCard"> Remove Library Card</button >
+	//<button class="button-67" role="button" @onclick="GetContacts"> Get Contact Forms</button >
 }
 else
 {
@@ -485,6 +486,33 @@ else
   </div>
 </div>
 
+<div class="modal fade @(showContact ? "show" : "")  @(displayContact ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Contact Forms</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseContacts">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @foreach (var contact in StaffService.Contacts)
+	   {
+		   <p> First Name: @contact.ContactFirstName</p>
+		   <p> Last Name: @contact.ContactLastName</p>
+		   <p> E-mail: @contact.ContactEmail </p>
+		   <p> Library: @contact.ContactLibrary</p>
+		   <p> Message: @contact.ContactMessage </p>
+		   <br />
+	   }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseContacts">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @code {
 	[CascadingParameter]
 	public MainLayout mainLayout { get; set; }
@@ -495,7 +523,7 @@ else
 		showLoans, displayLoans, showAddStaff, displayAddStaff, showHold, displayHold, showHoldConfirm,
 		displayHoldConfirm, showHolds, displayHolds, showReturn, displayReturn, displayReturnConfirm,
 		showReturnConfirm, showRemoveStaff, displayRemoveStaff, showRemoveConfirm, displayRemoveConfirm,
-		showRemoveCard, displayRemoveCard,showNewCDVD, displayNewCDVD;
+		showRemoveCard, displayRemoveCard,showNewCDVD, displayNewCDVD, showContact, displayContact;
 	private string? card_holder="", title="", loc="", author="", copies="", pub="", dis="", genre="",
 		num="", name="", date="", due="", error1="", error2="",error3="", error4="", error5="", snum="", cnum="",
 		phone_num="", pos="", branch="", type, year, pro;
@@ -523,6 +551,12 @@ else
 	{
 		await StaffService.GetHolds();
 		await ShowHolds();
+	}
+
+	private async Task GetContacts()
+	{
+		await StaffService.GetContacts();
+		await ShowContacts();
 	}
 
 	private async Task AddLibCard()
@@ -959,6 +993,20 @@ else
 		showNewCDVD = false;
 		await Task.Delay(500);
 		displayNewCDVD = false;
+	}
+
+	public async Task ShowContacts()
+	{
+		displayContact = true;
+		await Task.Delay(100);
+		showContact = true;
+	}
+
+	private async Task CloseContacts()
+	{
+		showContact = false;
+		await Task.Delay(500);
+		displayContact = false;
 	}
 
 	protected override async Task OnInitializedAsync()

@@ -30,5 +30,6 @@ namespace CPSC_471_Library.Client.Services.LibraryEventService
         {
             throw new NotImplementedException();
         }
+
     }
 }

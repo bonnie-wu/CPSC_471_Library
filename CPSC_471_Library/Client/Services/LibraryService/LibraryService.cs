@@ -11,7 +11,7 @@ namespace CPSC_471_Library.Client.Services.LibraryService
             _http = http;
         }
 
-        public List<Library> Libraries { get; set; }
+        public List<Library> Libraries { get; set; } = new List<Library>();
 
         public async Task GetAllLibraries()
         {

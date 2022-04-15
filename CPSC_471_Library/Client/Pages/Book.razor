@@ -92,7 +92,14 @@ else
 		}
 		else
 		{
-			book = await BookService.GetSingleBook((int)Id);
+			try {
+				book = await BookService.GetSingleBook((int)Id);
+			} 
+			catch (Exception ex)
+			{
+				// no book to show (this book was deleted but not redirected fast enough)
+			}
+
 		}
 	}
 

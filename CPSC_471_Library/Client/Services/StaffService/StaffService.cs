@@ -16,6 +16,7 @@ namespace CPSC_471_Library.Client.Services.StaffService
         public List<LibraryCard> Cards { get; set; } = new List<LibraryCard>();
         public List<Loan> Loans { get; set; } = new List<Loan>();
         public List<Hold> Holds { get; set; } = new List<Hold>();
+        public List<ContactForm> Contacts { get; set; } = new List<ContactForm>();
         public HttpClient Http { get; }
 
         public async Task<Staff> GetStaffMember(string num)
@@ -33,6 +34,13 @@ namespace CPSC_471_Library.Client.Services.StaffService
             var result = await http.GetFromJsonAsync<List<Staff>>("api/Staff");
             if (result != null)
                 Staffs = result;
+        }
+
+        public async Task GetContacts()
+        {
+            var result = await http.GetFromJsonAsync<List<ContactForm>>($"api/ContactForm");
+            if (result != null)
+                Contacts = result;
         }
 
         public async Task<LibraryCard> AddLibraryCard(LibraryCard card)

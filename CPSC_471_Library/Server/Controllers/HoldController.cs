@@ -22,21 +22,11 @@ namespace CPSC_471_Library.Server.Controllers
         }
 
         [HttpPost]
-        public async Task AddCard(Hold hold)
+        public async Task<ActionResult<List<Hold>>> AddHold(Hold hold)
         {
             context.Holds.Add(hold);
             await context.SaveChangesAsync();
+            return Ok(await context.Holds.ToListAsync());
         }
-
-        /*[HttpDelete("{title, card_number}")]
-        public async Task<ActionResult<List<Book>>> Del(int id)
-        {
-            var book = await context.Books.FindAsync(id);
-            if (book == null)
-                return BadRequest("Library card not found.");
-            context.Books.Remove(book);
-            await context.SaveChangesAsync();
-            return Ok(await context.Books.ToListAsync());
-        }*/
     }
 }

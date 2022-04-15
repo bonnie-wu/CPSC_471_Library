@@ -14,12 +14,17 @@ namespace CPSC_471_Library.Server.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<ContactForm>>> Get()
+        {
+            return Ok(await _context.ContactForms.ToListAsync());
+        }
+
         [HttpPost]
         public async Task<ActionResult<ContactForm>> CreateContactForm(ContactForm contactform)
         {
             _context.ContactForms.Add(contactform);
-            _context.SaveChanges();
-            //await _context.SaveChangesAsync();
+           await _context.SaveChangesAsync();
 
             return Ok(contactform);
         }
