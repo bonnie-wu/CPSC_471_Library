@@ -92,12 +92,12 @@ namespace CPSC_471_Library.Server.Data
         public DbSet<Book> Books => Set<Book>();
 
         public DbSet<LibraryCard> LibraryCards { get; set; }
-
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<Hold> Holds { get; set; }
         public DbSet<LibraryEvent> LibraryEvents { get; set; }
         public DbSet<Library> Libraries { get; set; }
         public DbSet<ContactForm> ContactForms { get; set; }
+        public DbSet<CDVD> Cdvds { get; set; }
     }
 }

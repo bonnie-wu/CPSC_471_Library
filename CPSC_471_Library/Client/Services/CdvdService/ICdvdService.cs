@@ -6,5 +6,6 @@
         Task<CDVD> GetSingleCdvd(int id);
         Task RemoveCdvd(int id);
         Task UpdateCdvd(CDVD cdvd);
+        Task<List<CDVD>> FilterCdvd(string filter);
     }
 }

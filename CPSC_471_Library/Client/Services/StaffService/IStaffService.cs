@@ -24,5 +24,6 @@
         Task<string> RemoveStaff(string num);
         Task<string> RemoveCard(string num);
         Task GetContacts();
+        Task<CDVD> AddCDVD(CDVD cdvd);
     }
 }

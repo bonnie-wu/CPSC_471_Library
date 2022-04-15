@@ -9,7 +9,7 @@ namespace CPSC_471_Library.Server.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
@@ -28,7 +28,7 @@ namespace CPSC_471_Library.Server.Migrations
                     table.PrimaryKey("PK_Books", x => x.Id);
                 });
 
-            /*migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable(
                 name: "Holds",
                 columns: table => new
                 {
@@ -42,7 +42,7 @@ namespace CPSC_471_Library.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Holds", x => x.Id);
-                });*/
+                });
 
             migrationBuilder.CreateTable(
                 name: "Libraries",
@@ -71,7 +71,7 @@ namespace CPSC_471_Library.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LibraryCards", x => x.Id);
-                });*/
+                });
 
             migrationBuilder.CreateTable(
                 name: "LibraryEvents",
@@ -122,7 +122,7 @@ namespace CPSC_471_Library.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Staffs", x => x.Id);
-                });*/
+                });
 
             migrationBuilder.CreateTable(
                 name: "ContactForms",
@@ -169,7 +169,7 @@ namespace CPSC_471_Library.Server.Migrations
                     { 2, new DateTime(2022, 4, 4, 10, 0, 0, 0, DateTimeKind.Unspecified), 9, 101010, "Book Fair" },
                     { 3, new DateTime(2022, 4, 20, 16, 0, 0, 0, DateTimeKind.Unspecified), 2, 100100, "Tutoring Day" },
                     { 4, new DateTime(2022, 4, 20, 16, 0, 0, 0, DateTimeKind.Unspecified), 2, 129129, "Tutoring Day" }
-                });
+                });*/
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactForms_ContactLibraryId",

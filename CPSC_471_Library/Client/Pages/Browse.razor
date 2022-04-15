@@ -1,37 +1,77 @@
 ﻿@page "/browse"
 @inject IBookService BookService
+@inject ICdvdService CdvdService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Browse</PageTitle>
 
 <h3>Browse</h3>
 
-<input type="text" id="input" onkeyup="sortProducts()" placeholder="Search for products...">
-<ul id="myUL">
-    @foreach (var book in BookService.Books)
+<EditForm Model="@contactform" OnValidSubmit="@onValidSubmit">
+    <div class="form-group">
+        <InputText id="Search" @bind-Value="filter" class="form-control" placeHolder="Search by genre..."></InputText>
+    </div>
+</EditForm>
+<ul class="list-group">
+    @foreach (var book in Books)
     {
-        <li><button class="displayBook" @onclick="(() => displayBook(book.Id))">@book.Title</button></li>
+        <li class="list-group-item"><button class="w-100 btn btn-primary btn-lg" @onclick="(() => displayBook(book.Id))">@book.Title</button></li>
     }
-    <li><a href="#">Book 1</a></li>
-    <li><a href="#">Book 2</a></li>
-    <li><a href="#">Movie 1</a></li>
-    <li><a href="#">Movie 2</a></li>
-    <li><a href="#">CD 1</a></li>
-    <li><a href="#">CD 2</a></li>
-    <li><a href="#">DVD 1</a></li>
-    <li><a href="#">DVD 2</a></li>
-    <li><a href="#">Digital Book 1</a></li>
-    <li><a href="#">Digital Book 2</a></li>
+    @foreach (var cdvd in cdvds)
+    {
+        <li class="list-group-item"><button class="w-100 btn btn-secondary btn-lg" @onclick="(() => displayCDVD(cdvd.Id))">@cdvd.Title</button></li>
+    }
 </ul>
 
 @code {
+    List<CDVD> cdvds = new List<CDVD>();
+    List<CPSC_471_Library.Shared.Book> Books = new List<CPSC_471_Library.Shared.Book>();
+    ContactForm contactform = new ContactForm();
+
+    string? filter="";
     protected override async Task OnInitializedAsync() 
     {
-        await BookService.GetBooks();
+        try
+        {
+            cdvds = await CdvdService.GetCdvds();
+            Books = await BookService.GetBooks();
+        }
+        catch (Exception ex)
+        {
+            // do nothing
+        }
+
     }
 
     void displayBook(int Id)
     {
         NavigationManager.NavigateTo($"showBook/{Id}");
+    }
+
+    void displayCDVD(int Id)
+    {
+        NavigationManager.NavigateTo($"cdvd/{Id}");
+    }
+
+    private async Task onValidSubmit()
+    {
+        if (filter == "")
+        {
+            try
+            {
+                Books = await BookService.GetBooks();
+                cdvds = await CdvdService.GetCdvds();
+            }
+            catch (Exception ex)
+            {
+                // do nothing
+            }
+        }
+        else
+        {
+            Books = await BookService.FilterBook(filter);
+            cdvds = await CdvdService.FilterCdvd(filter);
+        }
+        
     }
 }

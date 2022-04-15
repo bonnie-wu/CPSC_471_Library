@@ -14,14 +14,14 @@ namespace CPSC_471_Library.Client.Services.BookService
             this.navigationManager = navigationManager;
         }
 
-        public List<Book> Books { get; set; } = new List<Book>();
         public HttpClient Http { get; }
 
-        public async Task GetBooks()
+        public async Task<List<Book>> GetBooks()
         {
             var result = await http.GetFromJsonAsync<List<Book>>("api/Book");
             if (result != null)
-                Books = result;
+                return result;
+            throw new Exception("No books");
         }
 
         public async Task<Book> GetSingleBook(int id)
@@ -43,19 +43,18 @@ namespace CPSC_471_Library.Client.Services.BookService
             }   
         }
 
-        /*public async Task RemoveCDVD(int id)
-        {
-            await http.DeleteAsync($"api/CDVD/{id}");
-        }*/
 
         public async Task UpdateBook(Book book)
         {
             await http.PutAsJsonAsync<Book>($"api/Book", book);
         }
 
-        /*public async Task UpdateCDVD(CDVD cdvd)
+        public async Task<List<Book>> FilterBook(string filter)
         {
-            await http.PutAsJsonAsync<CDVD>($"api/CDVD", cdvd);
-        }*/
+            var result = await http.GetFromJsonAsync<List<Book>>($"api/Book/f/{filter}");
+            if (result != null)
+                return result;
+            throw new Exception("No books");
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿@page "/showBook"
-@page "/showBook/{id:int}"
-@inject IBookService BookService 
+﻿@page "/cdvd"
+@page "/cdvd/{id:int}"
+@inject ICdvdService CdvdService
 
 @if (Id == null)
 {
@@ -8,12 +8,12 @@
 }
 else
 {
-	<h1>@book.Title</h1>
-    <table class="table" style="width:100%">
+	<h1>@cdvd.Title</h1>
+	<table class="table" style="width:100%">
 		<thead>
 			<tr>
-				<th>Author</th>
-				<th>Publisher</th>
+				<th>Producer</th>
+				<th>Release Year</th>
 				<th>Distribution</th>
 				<th>Copies Available</th>
 				<th>Genre</th>
@@ -22,12 +22,12 @@ else
 		</thead>
 		<tbody>
 			<tr>
-				<td>@book.Author</td>
-				<td>@book.Publisher</td>
-				<td>@book.Distribution</td>
-				<td>@book.Copies</td>
-				<td>@book.Genre</td>
-				<td>@book.Location</td>
+				<td>@cdvd.Producer</td>
+				<td>@cdvd.ReleaseYear</td>
+				<td>@cdvd.Distribution</td>
+				<td>@cdvd.Copies</td>
+				<td>@cdvd.Genre</td>
+				<td>@cdvd.Location</td>
 			</tr>
 		</tbody>
 	</table>
@@ -45,13 +45,13 @@ else
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Are you sure you want to delete @book.Title? </h5>
+				<h5 class="modal-title">Are you sure you want to delete @cdvd.Title? </h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseDelete">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
             <div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteBook">Delete</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteCdvd">Delete</button>
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseDelete">No</button>
 			</div>
 		</div>
@@ -62,29 +62,29 @@ else
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLongTitle">Edit Book</h5>
+        <h5 class="modal-title" id="modalLongTitle">Edit CD/DVD</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseEdit">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
 		<label for="loginEmail" class="form-label">Title</label>
-		<input type="text" class="form-control" id="loginEmail" placeholder="Book title..." autocomplete="off" @bind-value="title" required/>
+		<input type="text" class="form-control" id="loginEmail" placeholder="CD/DVD title..." autocomplete="off" @bind-value="title" required/>
 		<label for="loginEmail" class="form-label">Location(s)</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate locations with commas ," autocomplete="off" required @bind-value="loc" />
-		<label for="loginEmail" class="form-label">Author</label>
-		<input type="text" class="form-control" id="loginEmail" placeholder="Name of author..." autocomplete="off" required @bind-value="author" />
+		<label for="loginEmail" class="form-label">Producer</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Name of producer..." autocomplete="off" required @bind-value="pro" />
 		<label for="loginEmail" class="form-label">Available Copies</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Number of available copies..." autocomplete="off" required @bind-value="copies" />  
-		<label for="loginEmail" class="form-label">Publisher</label>
-		<input type="text" class="form-control" id="loginEmail" placeholder="Name of publisher..." autocomplete="off" required @bind-value="pub" />
+		<label for="loginEmail" class="form-label">Release Year</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Year of release..." autocomplete="off" required @bind-value="pub" />
 		<label for="loginEmail" class="form-label">Distribution</label>
-		<input type="text" class="form-control" id="loginEmail" placeholder="physical or digital..." autocomplete="off" required @bind-value="dis" />
+		<input type="text" class="form-control" id="loginEmail" placeholder="CD or DVD..." autocomplete="off" required @bind-value="dis" />
 		<label for="loginEmail" class="form-label">Genre(s)</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate genres with commas ," autocomplete="off" required @bind-value="genre" />
 	</div>
       <div class="modal-footer">
-		 <button type="button" class="btn btn-primary" @onclick="EditBook">Edit</button>
+		 <button type="button" class="btn btn-primary" @onclick="EditCdvd">Edit</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseEdit">Cancel</button>
       </div>
     </div>
@@ -99,9 +99,9 @@ else
 	public MainLayout mainLayout { get; set; }
 
 	private bool showDelete, displayDelete, showEdit, displayEdit;
-	string? title, loc, author, copies, pub, dis, genre;
+	string? title, loc, pro, copies, pub, dis, genre;
 
-	CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
+	CPSC_471_Library.Shared.CDVD cdvd = new CPSC_471_Library.Shared.CDVD();
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -112,7 +112,7 @@ else
 		else
 		{
 			try {
-				book = await BookService.GetSingleBook((int)Id);
+				cdvd = await CdvdService.GetSingleCdvd((int)Id);
 			} 
 			catch (Exception ex)
 			{
@@ -123,29 +123,29 @@ else
 	}
 
 	// This is for staff ui
-	private async Task DeleteBook()
+	private async Task DeleteCdvd()
 	{
-		await BookService.RemoveBook(book.Id);
+		await CdvdService.RemoveCdvd(cdvd.Id);
 		await CloseDelete();
 	}
 
-	private async Task EditBook()
+	private async Task EditCdvd()
 	{
 		if (title != null)
-			book.Title = title;
+			cdvd.Title = title;
 		if (loc != null)
-			book.Location = loc;
-		if (author != null)
-			book.Author = author;
+			cdvd.Location = loc;
+		if (pro != null)
+			cdvd.Producer = pro;
 		if (copies != null)
-			book.Copies = Int32.Parse(copies);
+			cdvd.Copies = Int32.Parse(copies);
 		if (pub != null)
-			book.Publisher = pub;
+			cdvd.ReleaseYear = pub;
 		if (dis != null)
-			book.Distribution = dis;
+			cdvd.Distribution = dis;
 		if (genre != null)
-			book.Genre = genre;
-		await BookService.UpdateBook(book);
+			cdvd.Genre = genre;
+		await CdvdService.UpdateCdvd(cdvd);
 		await CloseEdit();
 	}
 

@@ -529,7 +529,7 @@ else
 		phone_num="", pos="", branch="", type, year, pro;
 
 	CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
-	//CPSC_471_Library.Shared.CDVD cdvd = new CPSC_471_Library.Shared.CDVD();
+	CPSC_471_Library.Shared.CDVD cdvd = new CPSC_471_Library.Shared.CDVD();
 	LibraryCard card = new LibraryCard();
 	Loan loan = new Loan();
 	Hold hold = new Hold();
@@ -595,24 +595,24 @@ else
 
 	private async Task AddNewCDVD()
 	{
-		//cdvd.Title = title;
-		//cdvd.Location = loc;
-		//cdvd.Producer = pro;
-		//cdvd.Copies = Int32.Parse(copies);
-		//cdvd.Distribution = dis;
-		//cdvd.Year = year;
-		//cdvd.Genre = genre;
-		//CPSC_471_Library.Shared.CDVD cdvd_ = await StaffService.AddCDVD(cdvd);
+		cdvd.Title = title;
+		cdvd.Location = loc;
+		cdvd.Producer = pro;
+		cdvd.Copies = Int32.Parse(copies);
+		cdvd.Distribution = dis;
+		cdvd.ReleaseYear = year;
+		cdvd.Genre = genre;
+		CPSC_471_Library.Shared.CDVD cdvd_ = await StaffService.AddCDVD(cdvd);
 		await CloseNewCDVD();
-		//if (cdvd_ == null)
-		//{
-		//	await ShowAddedBook();
-		//}
-		//else
-		//{
-		//	await ShowBookError();
-		//
-		//}
+		if (cdvd_ == null)
+		{
+			await ShowAddedBook();
+		}
+		else
+		{
+			await ShowBookError();
+		
+		}
 	}
 
 	private async Task LoanItem()

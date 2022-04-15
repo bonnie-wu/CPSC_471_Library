@@ -73,7 +73,7 @@ namespace CPSC_471_Library.Client.Services.StaffService
             
         }
 
-        /*public async Task<CDVD> AddCDVD(CDVD cdvd)
+        public async Task<CDVD> AddCDVD(CDVD cdvd)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace CPSC_471_Library.Client.Services.StaffService
                 await http.PostAsJsonAsync<CDVD>($"api/CDVD", cdvd);
                 return null;
             }
-        }*/
+        }
 
         public async Task<string> AddLoan(Loan loan)
         {
@@ -208,13 +208,13 @@ namespace CPSC_471_Library.Client.Services.StaffService
             throw new Exception("Book not found.");
         }
 
-       /* public async Task<CDVD> GetCDVD(string title)
+        public async Task<CDVD> GetCDVD(string title)
         {
             var result = await http.GetFromJsonAsync<CDVD>($"api/CDVD/cdvds/{title}");
             if (result != null)
                 return result;
             throw new Exception("CD/DVD not found.");
-        }*/
+        }
 
         public async Task GetLibraryCards()
         {
