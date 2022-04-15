@@ -7,5 +7,6 @@ namespace CPSC_471_Library.Server.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
+
     }
 }

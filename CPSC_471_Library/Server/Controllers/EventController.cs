@@ -8,8 +8,9 @@ namespace CPSC_471_Library.Server.Controllers
     {
         public static List<LibraryEvent> libEvents = new List<LibraryEvent>
         {
-            new LibraryEvent { EventName = "Reading with toddlers ", EventId = 1 },
-            new LibraryEvent { EventName = "Coding with teens ", EventId = 2 }
+            new LibraryEvent { EventName = "Kids Reading Day", EventId = 1},
+            new LibraryEvent { EventName = "Book Fair", EventId = 2 },
+            new LibraryEvent { EventName = "Tutoring Day", EventId = 3 }
         };
 
         [HttpGet]
