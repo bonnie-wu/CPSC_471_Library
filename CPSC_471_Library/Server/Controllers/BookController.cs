@@ -42,6 +42,15 @@ namespace CPSC_471_Library.Server.Controllers
             return Ok(book);
         }
 
+        [HttpGet("f/{genre}")]
+        public async Task<ActionResult<List<Book>>> GetBooksByGenre(string genre)
+        {
+            var book = context.Books.Where<Book>(_book => _book.Genre == genre);
+            if (book == null)
+                return BadRequest("Book not found.");
+            return Ok(await book.ToListAsync());
+        }
+
         [HttpPost]
         public async Task<ActionResult<List<Book>>> AddBook(Book book)
         {
