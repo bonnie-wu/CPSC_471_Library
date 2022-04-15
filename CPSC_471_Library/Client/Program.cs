@@ -15,5 +15,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<ILibraryEventService, LibraryEventService>();
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<IContactFormService, ContactFormService>();
 
 await builder.Build().RunAsync();
