@@ -7,24 +7,24 @@ namespace CPSC_471_Library.Server.Controllers
     [ApiController]
     public class LibraryController : ControllerBase
     {
-        public static List<Library> libraries = new List<Library>
+        private readonly DataContext _context;
+
+        public LibraryController(DataContext context)
         {
-            new Library { LibraryBranch = "Kanto", LibraryAddress = "124 Conch St.Kanto OC Y7U 6R3", LibraryId = 010101, LibraryPhone = "(555)-0101"},
-            new Library { LibraryBranch = "Emerald", LibraryAddress = "308 Negra Arroyo Lane Emerald City ZZ R4V 2A5", LibraryId = 100100, LibraryPhone = "(555)-0188"},
-            new Library { LibraryBranch = "Gravity Falls", LibraryAddress = "1640 Riverside Drive Bedrock TA U0F 0O1", LibraryId = 129129,LibraryPhone = "(555)-0123"},
-            new Library { LibraryBranch = "Bedrock", LibraryAddress = "31 Spooner Street Gravity Falls OR E4B 3C2", LibraryId = 727272,LibraryPhone = "(555)-0145"},
-        };
+            _context = context;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<LibraryEvent>>> getAllLibraries()
         {
+            var libraries = await _context.Libraries.ToListAsync();
             return Ok(libraries);
         }
 
-        [HttpGet("{libraryid}")]
-        public async Task<ActionResult<LibraryEvent>> getSingleLibrary(int libraryid)
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<LibraryEvent>> getSingleLibrary(int Id)
         {
-            var library = libraries.FirstOrDefault(l => l.LibraryId == libraryid);
+            var library = _context.Libraries.FirstOrDefault(l => l.Id == Id);
             if (library == null)
             {
                 return NotFound("Sorry, event could not be found. \n");

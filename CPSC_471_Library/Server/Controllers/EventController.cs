@@ -6,23 +6,24 @@ namespace CPSC_471_Library.Server.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        public static List<LibraryEvent> libEvents = new List<LibraryEvent>
+        private readonly DataContext _context;
+
+        public EventController(DataContext context)
         {
-            new LibraryEvent { EventName = "Kids Reading Day", EventId = 1},
-            new LibraryEvent { EventName = "Book Fair", EventId = 2 },
-            new LibraryEvent { EventName = "Tutoring Day", EventId = 3 }
-        };
+            _context = context;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<LibraryEvent>>> getAllEvents()
         {
+            var libEvents = await _context.LibraryEvents.ToListAsync();
             return Ok(libEvents);
         }
 
-        [HttpGet("{eventid}")]
-        public async Task<ActionResult<LibraryEvent>> getSingleEvent(int eventid)
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<LibraryEvent>> getSingleEvent(int Id)
         {
-            var libEvent = libEvents.FirstOrDefault(h => h.EventId == eventid);
+            var libEvent = _context.LibraryEvents.FirstOrDefault(h => h.Id == Id);
             if (libEvent == null)
             {
                 return NotFound("Sorry, event could not be found. \n");

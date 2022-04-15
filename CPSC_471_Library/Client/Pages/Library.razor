@@ -2,7 +2,7 @@
 <h3>Library Locations</h3>
 @inject ILibraryService LibraryService
 
-<table>
+<table class="table" style="width:100%">
     <thead>
         <tr>
             <th>Name</th>
@@ -15,7 +15,7 @@
         @foreach (var library in LibraryService.Libraries){
         <tr>
             <td>@library.LibraryBranch</td>
-            <td>@library.LibraryId</td>
+            <td>@library.Id</td>
             <td>@library.LibraryAddress</td>
             <td>@library.LibraryPhone</td>
         </tr>
