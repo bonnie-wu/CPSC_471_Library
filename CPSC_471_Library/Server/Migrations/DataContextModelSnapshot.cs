@@ -62,6 +62,40 @@ namespace CPSC_471_Library.Server.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("CPSC_471_Library.Shared.ContactForm", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactFirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactLastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ContactLibraryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContactMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("ContactLibraryId");
+
+                    b.ToTable("ContactForms");
+                });
+
             modelBuilder.Entity("CPSC_471_Library.Shared.Library", b =>
                 {
                     b.Property<int>("Id")
@@ -189,6 +223,17 @@ namespace CPSC_471_Library.Server.Migrations
                             EventLibraryId = 129129,
                             EventName = "Tutoring Day"
                         });
+                });
+
+            modelBuilder.Entity("CPSC_471_Library.Shared.ContactForm", b =>
+                {
+                    b.HasOne("CPSC_471_Library.Shared.Library", "ContactLibrary")
+                        .WithMany()
+                        .HasForeignKey("ContactLibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContactLibrary");
                 });
 #pragma warning restore 612, 618
         }

@@ -73,5 +73,6 @@ namespace CPSC_471_Library.Server.Data
         public DbSet<Book> Books => Set<Book>();
         public DbSet<LibraryEvent> LibraryEvents { get; set; }
         public DbSet<Library> Libraries {get; set; }
+        public DbSet<ContactForm> ContactForms => Set<ContactForm>();
     }
 }

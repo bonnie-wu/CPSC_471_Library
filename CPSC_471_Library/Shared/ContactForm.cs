@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace CPSC_471_Library.Shared
 {
-    public class ContactModel
+    public class ContactForm
     {
+        public int id { get; set; }
         public string ContactFirstName { get; set; } = string.Empty;
         public string ContactLastName { get; set; } = string.Empty;
         public string ContactEmail { get; set; } = string.Empty;

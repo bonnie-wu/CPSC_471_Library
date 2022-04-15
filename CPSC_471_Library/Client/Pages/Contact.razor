@@ -25,7 +25,7 @@
     </div>
     <div>
         <label>Library Branch</label>
-        <InputSelect id="ContactLibrary" @bind-Value="contactform.ContactLibrary" class="form-select">
+        <InputSelect @bind-Value="contactform.ContactLibrary" class="form-select">
             @foreach (var library in LibraryService.Libraries)
             {
                 <option value="@library.LibraryBranch">@library.LibraryBranch</option>
@@ -38,15 +38,16 @@
 
 @code {
 
-    ContactModel contactform = new ContactModel();
+    ContactForm contactform = new ContactForm();
 
     private void OnValidSubmit()
     {
-        Console.WriteLine(contactform);
+        Console.WriteLine("Submitted");
     }
 
     protected override async Task OnInitializedAsync()
     {
         await LibraryService.GetAllLibraries();
     }
+    
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPSC_471_Library.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220415093617_Initial")]
+    [Migration("20220415113608_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,40 @@ namespace CPSC_471_Library.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("CPSC_471_Library.Shared.ContactForm", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactFirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactLastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ContactLibraryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContactMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("ContactLibraryId");
+
+                    b.ToTable("ContactForms");
                 });
 
             modelBuilder.Entity("CPSC_471_Library.Shared.Library", b =>
@@ -191,6 +225,17 @@ namespace CPSC_471_Library.Server.Migrations
                             EventLibraryId = 129129,
                             EventName = "Tutoring Day"
                         });
+                });
+
+            modelBuilder.Entity("CPSC_471_Library.Shared.ContactForm", b =>
+                {
+                    b.HasOne("CPSC_471_Library.Shared.Library", "ContactLibrary")
+                        .WithMany()
+                        .HasForeignKey("ContactLibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContactLibrary");
                 });
 #pragma warning restore 612, 618
         }

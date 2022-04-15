@@ -8,18 +8,18 @@ namespace CPSC_471_Library.Client.Services.LibraryEventService
 {
     public class LibraryEventService : ILibraryEventService
     {
-        private readonly HttpClient http;
+        private readonly HttpClient _http;
 
         public LibraryEventService(HttpClient http)
         {
-            this.http = http;
+            _http = http;
         }
 
         public List<LibraryEvent> LibEvents { get; set; } = new List<LibraryEvent>();
 
         public async Task getAllEvents()
         {
-            var result = await http.GetFromJsonAsync<List<LibraryEvent>>("/api/Event");
+            var result = await _http.GetFromJsonAsync<List<LibraryEvent>>("/api/Event");
             if(result != null)
             {
                 LibEvents = result;

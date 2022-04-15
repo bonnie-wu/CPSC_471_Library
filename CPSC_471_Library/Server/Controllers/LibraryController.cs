@@ -15,7 +15,7 @@ namespace CPSC_471_Library.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LibraryEvent>>> getAllLibraries()
+        public async Task<ActionResult<List<LibraryEvent>>> GetAllLibraries()
         {
             var libraries = await _context.Libraries.ToListAsync();
             return Ok(libraries);
