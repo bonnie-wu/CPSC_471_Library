@@ -25,7 +25,10 @@
 </ul>
 
 @code {
-    protected override async Task OnInitializedAsync() => await BookService.GetBooks();
+    protected override async Task OnInitializedAsync() 
+    {
+        await BookService.GetBooks();
+    }
 
     void displayBook(int Id)
     {

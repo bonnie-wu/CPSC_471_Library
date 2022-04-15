@@ -65,35 +65,60 @@ namespace CPSC_471_Library.Client.Services.StaffService
             
         }
 
-        public async Task<string> AddLoan(Loan loan)
+        /*public async Task<CDVD> AddCDVD(CDVD cdvd)
         {
             try
             {
-                Book book = await GetBook(loan.Title);
+                CDVD cdvd_ = await GetCDVD(cdvd.Title);
+                return cdvd_;
+            }
+            catch (Exception ex)
+            {
+                await http.PostAsJsonAsync<CDVD>($"api/CDVD", cdvd);
+                return null;
+            }
+        }*/
+
+        public async Task<string> AddLoan(Loan loan)
+        {
+            Book book = new Book();
+            try
+            {
+                book = await GetBook(loan.Title);
                 if (book.Copies <= 0)
                     return "hold";
-                await http.PostAsJsonAsync<Loan>($"api/Loan", loan);
-                book.Copies--;
-                await http.PutAsJsonAsync<Book>($"api/Book", book);
-                return "Ok";
             }
             catch (Exception ex)
             {
                 return "No book";
             }
-            /*try
+            try
             {
                 LibraryCard card = await GetCard(loan.Card_number);
             }
             catch (Exception e)
             {
                 return "No card";
-            }*/
+            }
+
+            await http.PostAsJsonAsync<Loan>($"api/Loan", loan);
+            book.Copies--;
+            await http.PutAsJsonAsync<Book>($"api/Book", book);
+            return "Ok";
         }
 
-        public async Task<string> RemoveLoan(string num, string title)
+        public async Task<string> RemoveLoan(string num, string title, string type)
         {
-            var res = await http.DeleteAsync($"api/Loan/{title}/{num}");
+            Loan loan = new Loan();
+            try
+            {
+                loan = await GetLoan(num, title, type);
+            }
+            catch (Exception ex)
+            {
+                return "no loan";
+            }
+            var res = await http.DeleteAsync($"api/Loan/{loan.Id}");
             return "ok";
         }
 
@@ -125,9 +150,9 @@ namespace CPSC_471_Library.Client.Services.StaffService
             }
         }
 
-        public async Task<Loan> GetLoan(string num, string title)
+        public async Task<Loan> GetLoan(string num, string title, string type)
         {
-            var res = await http.GetFromJsonAsync<Loan>($"api/Loan/{title}/{num}");
+            var res = await http.GetFromJsonAsync<Loan>($"api/Loan/{type}/{title}/{num}");
             if (res != null)
                 return res;
             throw new Exception("No such loan");
@@ -174,6 +199,14 @@ namespace CPSC_471_Library.Client.Services.StaffService
                 return result;
             throw new Exception("Book not found.");
         }
+
+       /* public async Task<CDVD> GetCDVD(string title)
+        {
+            var result = await http.GetFromJsonAsync<CDVD>($"api/CDVD/cdvds/{title}");
+            if (result != null)
+                return result;
+            throw new Exception("CD/DVD not found.");
+        }*/
 
         public async Task GetLibraryCards()
         {

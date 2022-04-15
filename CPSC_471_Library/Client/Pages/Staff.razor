@@ -1,5 +1,5 @@
-﻿@* 
-	This page was referenced from: https://www.prowaretech.com/articles/current/blazor/wasm/login-form
+﻿@*
+	The modal format and login was referenced from: https://www.prowaretech.com/articles/current/blazor/wasm/login-form
 *@
 
 @page "/staffUI"
@@ -12,9 +12,8 @@
 	<h3 class="my-4">Hello, @mainLayout.GetStaff().Name</h3>
 	<button class="button-67" role="button" @onclick="CreateLibCard"> Create Library Card</button >
 	<button class="button-67" role="button" @onclick="ShowNewBook"> Add New Book</button >
-	<button class="button-67" role="button" @onclick="ShowNewLoan"> Loan Book</button >
-	<button class="button-67" role="button" > Loan CD or DVD</button >
-	<button class="button-67" role="button" > Add a New Location</button >
+	<button class="button-67" role="button" @onclick="ShowNewCDVD"> Add New CD/DVD</button >
+	<button class="button-67" role="button" @onclick="ShowNewLoan"> Loan Item</button >
 	<button class="button-67" role="button" @onclick="GetCardHolders"> Get All Card Holders</button >
 	<button class="button-67" role="button" @onclick="GetStaffMembers"> Show Staff</button >
 	<button class="button-67" role="button" @onclick="ShowLoans"> Show Loans</button >
@@ -128,11 +127,44 @@ else
   </div>
 </div>
 
+<div class="modal fade @(showNewCDVD ? "show" : "")  @(displayNewCDVD ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Add new book</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseNewCDVD">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Title</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="CD/DVD title..." autocomplete="off" @bind-value="title" required/>
+		<label for="loginEmail" class="form-label">Location(s)</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate locations with commas ," autocomplete="off" required @bind-value="loc" />
+		<label for="loginEmail" class="form-label">Producer</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Name of producer..." autocomplete="off" required @bind-value="pro" />
+		<label for="loginEmail" class="form-label">Available Copies</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Number of available copies..." autocomplete="off" required @bind-value="copies" />  
+		<label for="loginEmail" class="form-label">Distribution</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="CD or DVD..." autocomplete="off" required @bind-value="dis" />
+		<label for="loginEmail" class="form-label">Release Year</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="year..." autocomplete="off" required @bind-value="year" />
+		<label for="loginEmail" class="form-label">Genre(s)</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate genres with commas ," autocomplete="off" required @bind-value="genre" />
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-success" @onclick="AddNewCDVD">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseNewCDVD">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade @(showBookEr ? "show" : "")  @(displayBookEr ? "d-block" : "d-none")" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Error: @book.Title already exists</h5>
+				<h5 class="modal-title">Error: @title already exists</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseBookError">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -148,7 +180,7 @@ else
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">@book.Title has been added</h5>
+				<h5 class="modal-title">@title has been added</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseAddedBook">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -164,14 +196,14 @@ else
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLongTitle">Loan Book</h5>
+        <h5 class="modal-title" id="modalLongTitle">Loan Item</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseNewLoan">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
 		<label for="loginEmail" class="form-label">Title @error1</label>
-		<input type="text" class="form-control" id="loginEmail" placeholder="Book title..." autocomplete="off" @bind-value="title" required/>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Item title..." autocomplete="off" @bind-value="title" required/>
 		<label for="loginEmail" class="form-label">Name</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Borrowers Name..." autocomplete="off" required @bind-value="name" />
 		<label for="loginEmail" class="form-label">Card Number @error2</label>
@@ -179,10 +211,12 @@ else
 		<label for="loginEmail" class="form-label">Date</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Date of loan (mm/dd/yyyy)" autocomplete="off" required @bind-value="date" />  
 		<label for="loginEmail" class="form-label">Due Date</label>
-		<input type="text" class="form-control" id="loginEmail" placeholder="Books return date (mm/dd/yyyy)" autocomplete="off" required @bind-value="due" />
+		<input type="text" class="form-control" id="loginEmail" placeholder="Return date (mm/dd/yyyy)" autocomplete="off" required @bind-value="due" />
+		<label for="loginEmail" class="form-label">Type</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="book or CD/DVD" autocomplete="off" required @bind-value="type" />
 	</div>
       <div class="modal-footer">
-		 <button type="button" class="btn btn-success" @onclick="LoanBook">Add</button>
+		 <button type="button" class="btn btn-success" @onclick="LoanItem">Add</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseNewLoan">Close</button>
       </div>
     </div>
@@ -249,6 +283,7 @@ else
 		   <p> Book Title: @loan.Title </p>
 		   <p> Date Borrowed: @loan.Curr_date </p>
 		   <p> Due Date: @loan.Due_date </p>
+		   <p> Type: @loan.Type</p>
 		   <br />
 	   }
       </div>
@@ -362,6 +397,11 @@ else
 		<input type="text" class="form-control" id="loginEmail" placeholder="Enter borrowers card number..." autocomplete="off" @bind-value="num" required/>
 		<label for="loginEmail" class="form-label">Title</label>
 		<input type="text" class="form-control" id="loginEmail" placeholder="Enter borrowed item's title..." autocomplete="off" @bind-value="title" required/>
+		<label for="loginEmail" class="form-label">Type</label>
+		<select class="form-control" @bind="type">
+			<option value="book">Book</option>
+			<option value="CD/DVD">CD/DVD</option>
+		</select>
 	</div>
       <div class="modal-footer">
 		 <button type="button" class="btn btn-success" @onclick="ReturnItem">Remove</button>
@@ -455,13 +495,13 @@ else
 		showLoans, displayLoans, showAddStaff, displayAddStaff, showHold, displayHold, showHoldConfirm,
 		displayHoldConfirm, showHolds, displayHolds, showReturn, displayReturn, displayReturnConfirm,
 		showReturnConfirm, showRemoveStaff, displayRemoveStaff, showRemoveConfirm, displayRemoveConfirm,
-		showRemoveCard, displayRemoveCard;
+		showRemoveCard, displayRemoveCard,showNewCDVD, displayNewCDVD;
 	private string? card_holder="", title="", loc="", author="", copies="", pub="", dis="", genre="",
 		num="", name="", date="", due="", error1="", error2="",error3="", error4="", error5="", snum="", cnum="",
-		phone_num="", pos="", branch="";
+		phone_num="", pos="", branch="", type, year, pro;
 
 	CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
-
+	//CPSC_471_Library.Shared.CDVD cdvd = new CPSC_471_Library.Shared.CDVD();
 	LibraryCard card = new LibraryCard();
 	Loan loan = new Loan();
 	Hold hold = new Hold();
@@ -519,16 +559,42 @@ else
 		}
 	}
 
-	private async Task LoanBook()
+	private async Task AddNewCDVD()
+	{
+		//cdvd.Title = title;
+		//cdvd.Location = loc;
+		//cdvd.Producer = pro;
+		//cdvd.Copies = Int32.Parse(copies);
+		//cdvd.Distribution = dis;
+		//cdvd.Year = year;
+		//cdvd.Genre = genre;
+		//CPSC_471_Library.Shared.CDVD cdvd_ = await StaffService.AddCDVD(cdvd);
+		await CloseNewCDVD();
+		//if (cdvd_ == null)
+		//{
+		//	await ShowAddedBook();
+		//}
+		//else
+		//{
+		//	await ShowBookError();
+		//
+		//}
+	}
+
+	private async Task LoanItem()
 	{
 		loan.Card_number = num;
 		loan.Curr_date = date;
 		loan.Due_date = due;
 		loan.Name = name;
 		loan.Title = title;
+		if (type == "book")
+			loan.Type = "book";
+		else if (type == "CD/DVD")
+			loan.Type = "CD/DVD";
 		string res = await StaffService.AddLoan(loan);
 		if (res == "No book")
-			error1 = "(No such book)";
+			error1 = "(No such item)";
 		else if (res == "No card")
 			error2 = "(Card does not exist)";
 		else if (res == "hold")
@@ -555,6 +621,7 @@ else
 		await CloseHold();
 		hold.Name = loan.Name;
 		hold.Title = title;
+		hold.Card_number = loan.Card_number;
 		hold.Hold_date = loan.Curr_date;
 		await StaffService.HoldItem(hold);
 		await ShowHoldConfirm();
@@ -562,11 +629,19 @@ else
 
 	private async Task ReturnItem()
 	{
-		if (num != null && title != null)
+		if (num != null && title != null && type != null)
 		{
-			string res = await StaffService.RemoveLoan((string)num, (string)title);
-			await CloseReturn();
-			//await ShowReturnConfirm();
+			string res = await StaffService.RemoveLoan((string)num, (string)title, (string) type);
+			if (res == "no loan")
+			{
+				error5 = "(Loan does not exist)";
+			}
+			else
+			{
+				await CloseReturn();
+				await ShowReturnConfirm();
+			}
+			
 		}
 		
 	}
@@ -870,6 +945,20 @@ else
 		showRemoveConfirm = false;
 		await Task.Delay(500);
 		displayRemoveConfirm = false;
+	}
+
+	public async Task ShowNewCDVD()
+	{
+		displayNewCDVD = true;
+		await Task.Delay(100);
+		showNewCDVD = true;
+	}
+
+	private async Task CloseNewCDVD()
+	{
+		showNewCDVD = false;
+		await Task.Delay(500);
+		displayNewCDVD = false;
 	}
 
 	protected override async Task OnInitializedAsync()

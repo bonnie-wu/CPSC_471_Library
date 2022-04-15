@@ -1,14 +1,17 @@
-﻿using System.Net.Http.Json;
+﻿using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace CPSC_471_Library.Client.Services.BookService
 {
     public class BookService : IBookService
     {
         private HttpClient http;
+        private NavigationManager navigationManager;
 
-        public BookService(HttpClient http)
+        public BookService(HttpClient http, NavigationManager navigationManager)
         {
             this.http = http;
+            this.navigationManager = navigationManager;
         }
 
         public List<Book> Books { get; set; } = new List<Book>();
@@ -28,5 +31,32 @@ namespace CPSC_471_Library.Client.Services.BookService
                 return result;
             throw new Exception("Book not found.");
         }
+
+        // This is for staff ui
+        public async Task RemoveBook(int id)
+        {
+            var result = await http.DeleteAsync($"api/Book/{id}");
+            if (result != null)
+            {
+                await GetBooks();
+                navigationManager.NavigateTo("browse");
+            }   
+            throw new Exception("error");
+        }
+
+        /*public async Task RemoveCDVD(int id)
+        {
+            await http.DeleteAsync($"api/CDVD/{id}");
+        }*/
+
+        public async Task UpdateBook(Book book)
+        {
+            await http.PutAsJsonAsync<Book>($"api/Book", book);
+        }
+
+        /*public async Task UpdateCDVD(CDVD cdvd)
+        {
+            await http.PutAsJsonAsync<CDVD>($"api/CDVD", cdvd);
+        }*/
     }
 }

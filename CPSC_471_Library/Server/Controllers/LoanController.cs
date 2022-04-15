@@ -20,10 +20,10 @@ namespace CPSC_471_Library.Server.Controllers
             return Ok(await context.Loans.ToListAsync());
         }
 
-        [HttpGet("{title}/{no}")]
-        public async Task<ActionResult<Loan>> GetLoan(string title, string no)
+        [HttpGet("{type}/{title}/{no}")]
+        public async Task<ActionResult<Loan>> GetLoan(string type, string title, string no)
         {
-            var loan = await context.Loans.FirstOrDefaultAsync(loan_ => !(loan_.Card_number != no || loan_.Title != title));
+            var loan = await context.Loans.FirstOrDefaultAsync(loan_ => !(loan_.Card_number != no || loan_.Title != title) && loan_.Type == type);
             if (loan == null)
                 return BadRequest("No loan found.");
             return Ok(loan);
@@ -54,10 +54,10 @@ namespace CPSC_471_Library.Server.Controllers
             await context.SaveChangesAsync();
         }
 
-        [HttpDelete("{title}/{no}")]
-        public async Task RemoveLoan(string title, string no)
+        [HttpDelete("{id}")]
+        public async Task RemoveLoan(int id)
         {
-            var loan = await context.Loans.FirstOrDefaultAsync(loan_ => !(loan_.Card_number != no || loan_.Title != title));
+            var loan = await context.Loans.FindAsync(id);
             if (loan == null)
                 return;
             context.Loans.Remove(loan);

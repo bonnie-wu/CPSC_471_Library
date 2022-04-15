@@ -14,5 +14,6 @@ namespace CPSC_471_Library.Shared
         public string Curr_date { get; set; } = String.Empty;
         public string Due_date { get; set; } = String.Empty;
         public string Title { get; set; } = String.Empty;
+        public string Type { get; set; } = String.Empty;
     }
 }

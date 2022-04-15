@@ -1,6 +1,6 @@
 ﻿@page "/showBook"
 @page "/showBook/{id:int}"
-@inject IBookService BookService
+@inject IBookService BookService 
 
 @if (Id == null)
 {
@@ -14,23 +14,140 @@ else
     //etc...
 }
 
+@* Modals + buttons for staff ui*@
+@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
+{
+    <button type="button" class="btn btn-danger" @onclick="ShowDelete">Delete</button>
+    <button type="submit" class="btn btn-primary" @onclick="ShowEdit"><i class="oi oi-pencil"></i></button>
+}
 
+
+<div class="modal fade @(showDelete ? "show" : "")  @(displayDelete ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Are you sure you want to delete @book.Title? </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseDelete">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+            <div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteBook">Delete</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseDelete">No</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade @(showEdit ? "show" : "")  @(displayEdit ? "d-block" : "d-none")" id="modalLong" tabindex="-1" role="dialog" aria-labelledby="modalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle">Edit Book</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseEdit">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<label for="loginEmail" class="form-label">Title</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Book title..." autocomplete="off" @bind-value="title" required/>
+		<label for="loginEmail" class="form-label">Location(s)</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate locations with commas ," autocomplete="off" required @bind-value="loc" />
+		<label for="loginEmail" class="form-label">Author</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Name of author..." autocomplete="off" required @bind-value="author" />
+		<label for="loginEmail" class="form-label">Available Copies</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Number of available copies..." autocomplete="off" required @bind-value="copies" />  
+		<label for="loginEmail" class="form-label">Publisher</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Name of publisher..." autocomplete="off" required @bind-value="pub" />
+		<label for="loginEmail" class="form-label">Distribution</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="physical or digital..." autocomplete="off" required @bind-value="dis" />
+		<label for="loginEmail" class="form-label">Genre(s)</label>
+		<input type="text" class="form-control" id="loginEmail" placeholder="Seperate genres with commas ," autocomplete="off" required @bind-value="genre" />
+	</div>
+      <div class="modal-footer">
+		 <button type="button" class="btn btn-primary" @onclick="EditBook">Edit</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseEdit">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+@* End of staff ui features*@
 
 @code {
-    [Parameter]
-    public int? Id { get; set; }
+	[Parameter]
+	public int? Id { get; set; }
+	[CascadingParameter]
+	public MainLayout mainLayout { get; set; }
 
-    CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
+	private bool showDelete, displayDelete, showEdit, displayEdit;
+	string? title, loc, author, copies, pub, dis, genre;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        if (Id == null)
-        {
-            // do something
-        }
-        else
-        {
-            book = await BookService.GetSingleBook((int)Id);
-        }
-    }
+	CPSC_471_Library.Shared.Book book = new CPSC_471_Library.Shared.Book();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id == null)
+		{
+			// do something
+		}
+		else
+		{
+			book = await BookService.GetSingleBook((int)Id);
+		}
+	}
+
+	// This is for staff ui
+	private async Task DeleteBook()
+	{
+		await BookService.RemoveBook(book.Id);
+		await CloseDelete();
+	}
+
+	private async Task EditBook()
+	{
+		if (title != null)
+			book.Title = title;
+		if (loc != null)
+			book.Location = loc;
+		if (author != null)
+			book.Author = author;
+		if (copies != null)
+			book.Copies = Int32.Parse(copies);
+		if (pub != null)
+			book.Publisher = pub;
+		if (dis != null)
+			book.Distribution = dis;
+		if (genre != null)
+			book.Genre = genre;
+		await BookService.UpdateBook(book);
+		await CloseEdit();
+	}
+
+	public async Task ShowDelete()
+	{
+		displayDelete = true;
+		await Task.Delay(100);
+		showDelete = true;
+	}
+
+	private async Task CloseDelete()
+	{
+		showDelete = false;
+		await Task.Delay(500);
+		displayDelete = false;
+	}
+
+	public async Task ShowEdit()
+	{
+		displayEdit = true;
+		await Task.Delay(100);
+		showEdit = true;
+	}
+
+	private async Task CloseEdit()
+	{
+		showEdit = false;
+		await Task.Delay(500);
+		displayEdit = false;
+	}
 }

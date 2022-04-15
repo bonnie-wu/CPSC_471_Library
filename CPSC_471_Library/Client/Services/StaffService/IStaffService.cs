@@ -19,7 +19,7 @@
         Task<Staff> AddStaff(Staff staff);
         Task HoldItem(Hold hold);
         Task GetHolds();
-        Task<string> RemoveLoan(string num, string title);
+        Task<string> RemoveLoan(string num, string title, string type);
         Task<string> RemoveStaff(string num);
         Task<string> RemoveCard(string num);
     }
