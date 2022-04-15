@@ -1,5 +1,8 @@
 global using CPSC_471_Library.Client.Services.BookService;
 global using CPSC_471_Library.Client.Services.StaffService;
+global using CPSC_471_Library.Client.Services.ContactFormService;
+global using CPSC_471_Library.Client.Services.LibraryEventService;
+global using CPSC_471_Library.Client.Services.LibraryService;
 global using CPSC_471_Library.Shared;
 using CPSC_471_Library.Client;
 using Microsoft.AspNetCore.Components.Web;
