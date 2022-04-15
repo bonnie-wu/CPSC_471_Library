@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.1.32328.378
+VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CPSC_471_Library.Server", "CPSC_471_Library\Server\CPSC_471_Library.Server.csproj", "{27C10CDA-FC45-4760-BE18-B3DEE8C80C7B}"
 EndProject

@@ -1,0 +1,53 @@
+﻿@page "/contact"
+@using CPSC_471_Library.Shared
+@inject ILibraryService LibraryService
+
+<h3>Contact Us!</h3>
+
+<PageTitle>Contact us!</PageTitle>
+
+<EditForm Model="@contactform" OnValidSubmit="@OnValidSubmit">
+    <div class="form-group">
+        <label for="ContactFirstName">First Name</label>
+        <InputText id="ContactFirstName" @bind-Value="contactform.ContactFirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="ContactLastName">Last Name</label>
+        <InputText id="ContactLastName" @bind-Value="contactform.ContactLastName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="ContactEmail">Email</label>
+        <InputText id="ContactEmail" @bind-Value="contactform.ContactEmail" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="ContactMessage">Message</label>
+        <InputTextArea id="ContactMessage" @bind-Value="contactform.ContactMessage" class="form-control"></InputTextArea>
+    </div>
+    <div>
+        <label>Library Branch</label>
+        <InputSelect @bind-Value="contactform.ContactLibrary" class="form-select">
+            @foreach (var library in LibraryService.Libraries)
+            {
+                <option value="@library.LibraryBranch">@library.LibraryBranch</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+
+    ContactForm contactform = new ContactForm();
+
+    private void OnValidSubmit()
+    {
+        Console.WriteLine("Submitted");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LibraryService.GetAllLibraries();
+    }
+    
+}

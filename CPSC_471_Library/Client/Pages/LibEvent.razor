@@ -1,0 +1,44 @@
+﻿@page "/Events"
+@inject ILibraryEventService LibraryEventService
+@inject ILibraryService LibraryService
+
+<h3>Library Events</h3>
+
+<table class="table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Event Name</th>
+            <th>Event Id</th>
+            <th>Event Date</th>
+            <th>Event Duration</th>
+            <th>Library Branch</th>
+            <th>Library Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var libEvent in LibraryEventService.LibEvents){
+        <tr>
+            <td>@libEvent.EventName</td>
+            <td>@libEvent.Id</td>
+            <td>@libEvent.EventDate</td>
+            <td>@libEvent.EventDuration hour(s)</td>
+            @foreach (var library in LibraryService.Libraries)
+            {
+                @if (library.Id == libEvent.EventLibraryId)
+                {
+                    <td>@library.LibraryBranch</td>
+                    <td>@library.LibraryAddress</td>
+                }
+            }
+        </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LibraryEventService.getAllEvents();
+    }
+}

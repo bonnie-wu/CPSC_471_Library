@@ -1,0 +1,31 @@
+﻿@page "/Library"
+<h3>Library Locations</h3>
+@inject ILibraryService LibraryService
+
+<table class="table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Library Id</th>
+            <th>Address</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var library in LibraryService.Libraries){
+        <tr>
+            <td>@library.LibraryBranch</td>
+            <td>@library.Id</td>
+            <td>@library.LibraryAddress</td>
+            <td>@library.LibraryPhone</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await LibraryService.GetAllLibraries();
+    }
+}
